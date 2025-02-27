@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/pacientes")
 public class PacienteController {
@@ -32,5 +34,17 @@ public class PacienteController {
         PacienteDTO pacienteAtualizado = pacienteService.updatePacienteDTO(dto); {
             return ResponseEntity.ok(pacienteAtualizado);
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PacienteDTO>> findAll() {
+        List<PacienteDTO> pacientes = pacienteService.findAll();
+        return ResponseEntity.ok(pacientes);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarPaciente(@PathVariable Long id) {
+        pacienteService.deletarPaciente(id);
+        return ResponseEntity.noContent().build();
     }
 }

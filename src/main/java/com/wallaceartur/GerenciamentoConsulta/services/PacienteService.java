@@ -5,8 +5,13 @@ import com.wallaceartur.GerenciamentoConsulta.model.dtos.AtualizarPacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.NovoPacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.PacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.PacienteRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PacienteService {
@@ -40,5 +45,17 @@ public class PacienteService {
 
     }
 
+    public List<PacienteDTO> findAll() {
+        return pacienteRepository.findAll().stream()
+                .map(PacienteDTO::new)
+                .toList();
+    }
+
+    public void deletarPaciente(Long id) {
+        if(!pacienteRepository.existsById(id)){
+            throw new EntityNotFoundException("Paciente nao encontrado");
+        }
+        pacienteRepository.deleteById(id);
+    }
 
 }
