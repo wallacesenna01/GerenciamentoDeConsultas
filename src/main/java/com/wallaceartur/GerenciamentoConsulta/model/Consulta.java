@@ -3,6 +3,7 @@ package com.wallaceartur.GerenciamentoConsulta.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "consultas")
@@ -11,7 +12,7 @@ public class Consulta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDate dataHora;
+    private LocalDateTime dataHora;
     private String status;
 
     @ManyToOne
@@ -24,7 +25,7 @@ public class Consulta {
 
     public Consulta() {}
 
-    public Consulta(Long id, LocalDate dataHora, String status, Paciente paciente, Medico medico) {
+    public Consulta(Long id, LocalDateTime dataHora, String status, Paciente paciente, Medico medico) {
         this.id = id;
         this.dataHora = dataHora;
         this.status = status;
@@ -40,11 +41,11 @@ public class Consulta {
         this.id = id;
     }
 
-    public LocalDate getDataHora() {
+    public LocalDateTime getDataHora() {
         return dataHora;
     }
 
-    public void setDataHora(LocalDate dataHora) {
+    public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
     }
 
