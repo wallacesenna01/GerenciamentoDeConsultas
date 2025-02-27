@@ -26,6 +26,8 @@ public class Medico {
         this.consultas = consultas;
     }
 
+    public Medico() {}
+
     public Long getId() {
         return id;
     }
