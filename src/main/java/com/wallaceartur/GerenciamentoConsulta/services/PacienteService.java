@@ -1,6 +1,7 @@
 package com.wallaceartur.GerenciamentoConsulta.services;
 
 import com.wallaceartur.GerenciamentoConsulta.model.Paciente;
+import com.wallaceartur.GerenciamentoConsulta.model.dtos.AtualizarPacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.NovoPacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.PacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.PacienteRepository;
@@ -25,4 +26,19 @@ public class PacienteService {
 
         return new PacienteDTO(salvo);
     }
+
+    public PacienteDTO updatePacienteDTO(AtualizarPacienteDTO dto) {
+        Paciente paciente = pacienteRepository.findById(dto.id())
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
+
+        paciente.setEmail(dto.email());
+        paciente.setTelefone(dto.telefone());
+
+        Paciente salvo = pacienteRepository.save(paciente);
+
+        return new PacienteDTO(salvo);
+
+    }
+
+
 }
