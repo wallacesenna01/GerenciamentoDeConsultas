@@ -15,6 +15,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -29,14 +31,20 @@ public class ConsultaService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
+
     public ConsultaDTO agendarConsulta(NovaConsultaDTO dto) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        LocalDateTime dataHora = LocalDateTime.parse(dto.datahora(), formatter);
+
+
         Medico medico = medicoRepository.findById(dto.medicoId())
                 .orElseThrow(() -> new RuntimeException("Medico não encontrado"));
 
         Paciente paciente  = pacienteRepository.findById(dto.pacienteId())
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
 
-        Consulta consulta = new Consulta(null, dto.datahora(), StatusConsulta.AGENDADA, paciente, medico);
+        Consulta consulta = new Consulta(null, dataHora, StatusConsulta.AGENDADA, paciente, medico);
 
         consulta = consultaRepository.save(consulta);
 
