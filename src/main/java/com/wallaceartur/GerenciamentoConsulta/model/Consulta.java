@@ -1,5 +1,7 @@
 package com.wallaceartur.GerenciamentoConsulta.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wallaceartur.GerenciamentoConsulta.enums.StatusConsulta;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -12,8 +14,12 @@ public class Consulta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataHora;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private StatusConsulta status;
 
     @ManyToOne
     @JoinColumn(name = "paciente_id")
@@ -25,7 +31,7 @@ public class Consulta {
 
     public Consulta() {}
 
-    public Consulta(Long id, LocalDateTime dataHora, String status, Paciente paciente, Medico medico) {
+    public Consulta(Long id, LocalDateTime dataHora, StatusConsulta status, Paciente paciente, Medico medico) {
         this.id = id;
         this.dataHora = dataHora;
         this.status = status;
@@ -49,11 +55,11 @@ public class Consulta {
         this.dataHora = dataHora;
     }
 
-    public String getStatus() {
+    public StatusConsulta getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusConsulta status) {
         this.status = status;
     }
 
