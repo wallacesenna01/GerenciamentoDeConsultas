@@ -4,6 +4,9 @@ import com.wallaceartur.GerenciamentoConsulta.model.dtos.AtualizarPacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.NovoPacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.PacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.services.PacienteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,4 +57,5 @@ public class PacienteController {
         pacienteService.deletarPaciente(id);
         return ResponseEntity.noContent().build();
     }
+    
 }
