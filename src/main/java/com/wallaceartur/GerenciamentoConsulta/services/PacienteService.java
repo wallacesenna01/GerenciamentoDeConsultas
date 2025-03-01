@@ -29,6 +29,8 @@ public class PacienteService {
         paciente.setTelefone(dto.telefone());
         paciente.setEmail(dto.email());
 
+        rabbitTemplate.convertAndSend("fila_notificacao_paciente", paciente.getEmail());
+
         Paciente salvo = pacienteRepository.save(paciente);
 
         return new PacienteDTO(salvo);
@@ -43,7 +45,9 @@ public class PacienteService {
 
         Paciente salvo = pacienteRepository.save(paciente);
 
-        rabbitTemplate.convertAndSend("fila_notificacao_paciente", salvo.getEmail());
+
+
+        System.out.println("mensagem enviada para fila : " + salvo.getEmail());
 
         return new PacienteDTO(salvo);
 
