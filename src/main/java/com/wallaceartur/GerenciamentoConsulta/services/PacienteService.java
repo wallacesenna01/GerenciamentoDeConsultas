@@ -6,6 +6,7 @@ import com.wallaceartur.GerenciamentoConsulta.model.dtos.NovoPacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.PacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.PacienteRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ public class PacienteService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     public PacienteDTO novoPacienteDto(NovoPacienteDTO dto ) {
         Paciente paciente = new Paciente();
@@ -38,6 +42,8 @@ public class PacienteService {
         paciente.setTelefone(dto.telefone());
 
         Paciente salvo = pacienteRepository.save(paciente);
+
+        rabbitTemplate.convertAndSend("fila_notificacao_paciente", salvo.getEmail());
 
         return new PacienteDTO(salvo);
 

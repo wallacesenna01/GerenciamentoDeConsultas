@@ -7,7 +7,6 @@ import com.wallaceartur.GerenciamentoConsulta.model.Paciente;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.AtualizarConsultaDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.ConsultaDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.NovaConsultaDTO;
-import com.wallaceartur.GerenciamentoConsulta.model.dtos.PacienteDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.ConsultaRepository;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.MedicoRepository;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.PacienteRepository;
