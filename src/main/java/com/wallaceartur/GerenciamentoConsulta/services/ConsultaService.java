@@ -82,6 +82,18 @@ public class ConsultaService {
     public void cancelarConsulta(Long id) {
         Consulta consulta = consultaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("consulta nao encontrada"));
-        consultaRepository.delete(consulta);
+        consulta.setStatus(StatusConsulta.CANCELADA);
+        consultaRepository.save(consulta);
+     }
+
+     public void atualizarConsultaVencidas(){
+        LocalDateTime agora = LocalDateTime.now();
+        List<Consulta> consultas = consultaRepository.findByStatusAndDataHoraBefore(StatusConsulta.AGENDADA, agora);
+
+        for (Consulta consulta : consultas) {
+            consulta.setStatus(StatusConsulta.REALIZADA);
+        }
+
+        consultaRepository.saveAll(consultas);
      }
 }

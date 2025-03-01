@@ -46,9 +46,15 @@ public class ConsultaController {
 
     }
 
-    @DeleteMapping("/{id}")
+    @PatchMapping("/{id}/cancelar")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         consultaService.cancelarConsulta(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/atualizar-status")
+    public ResponseEntity<Void> atualizaConsultaStatus() {
+        consultaService.atualizarConsultaVencidas();
         return ResponseEntity.noContent().build();
     }
 }
