@@ -53,6 +53,13 @@ public class PacienteService {
 
     }
 
+    public PacienteDTO findById(Long id) {
+        Paciente paciente = pacienteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente nao encontrado"));
+
+        return new PacienteDTO(paciente);
+    }
+
     public List<PacienteDTO> findAll() {
         return pacienteRepository.findAll().stream()
                 .map(PacienteDTO::new)
