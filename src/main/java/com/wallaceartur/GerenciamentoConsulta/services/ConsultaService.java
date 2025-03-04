@@ -7,10 +7,12 @@ import com.wallaceartur.GerenciamentoConsulta.model.Paciente;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.AtualizarConsultaDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.ConsultaDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.NovaConsultaDTO;
+import com.wallaceartur.GerenciamentoConsulta.model.dtos.NovaConsultaNotificacaoDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.ConsultaRepository;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.MedicoRepository;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.PacienteRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +32,13 @@ public class ConsultaService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
 
     public ConsultaDTO agendarConsulta(NovaConsultaDTO dto) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         LocalDateTime dataHora = LocalDateTime.parse(dto.datahora(), formatter);
 
 
@@ -44,6 +49,8 @@ public class ConsultaService {
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
 
         Consulta consulta = new Consulta(null, dataHora, StatusConsulta.AGENDADA, paciente, medico);
+
+        rabbitTemplate.convertAndSend("fila_notificacao_consulta" , paciente.getEmail() );
 
         consulta = consultaRepository.save(consulta);
 
