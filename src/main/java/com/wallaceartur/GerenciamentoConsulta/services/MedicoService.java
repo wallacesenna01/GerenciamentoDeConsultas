@@ -5,6 +5,7 @@ import com.wallaceartur.GerenciamentoConsulta.model.dtos.AtualizarMedicoDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.MedicoDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.NovoMedicoDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.MedicoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +31,12 @@ public class MedicoService {
 
         Medico salvo = medicoRepository.save(medico);
         return new MedicoDTO(salvo);
+    }
+
+    public MedicoDTO findById(Long id) {
+        Medico medico = medicoRepository.findById(id)
+                .orElseThrow(() -> new  EntityNotFoundException("Medico não encontrado"));
+        return new MedicoDTO(medico);
     }
 
     public MedicoDTO atualizar(AtualizarMedicoDTO dto) {

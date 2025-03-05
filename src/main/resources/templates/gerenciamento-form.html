@@ -40,7 +40,6 @@
                         <div class="mb-3">
                             <label class="form-label">Data de Nascimento</label>
                             <input type="text" id="dataNascimento" name="dataNascimento" class="form-control" required>
-
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Telefone</label>
@@ -61,19 +60,18 @@
             <div class="card">
                 <div class="card-header">Agendar Consulta</div>
                 <div class="card-body">
-                    <form th:action="@{/consultas}" method="post">
+                    <form th:action="@{/marcar/consulta}" method="post">
                         <div class="mb-3">
                             <label class="form-label">Data e Hora</label>
-                            <input type="datetime-local" name="datahora" class="form-control" required>
+                            <input type="text"  name="datahora" class="form-control" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Médico</label>
-                            <select name="medicoNome" class="form-select" required>
-                                <option th:each="medico : ${medicos}" th:value="${medico.nome}" th:text="${medico.nome}"></option>
-                            </select>
-                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">ID do Paciente</label>
+                            <input type="number" name="medicoId" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">ID do Medico</label>
                             <input type="number" name="pacienteId" class="form-control" required>
                         </div>
                         <div class="mb-3">
@@ -101,10 +99,64 @@
             <tr th:each="medico : ${medicos}">
                 <td th:text="${medico.nome}"></td>
                 <td th:text="${medico.especialidade}"></td>
+                <td th:text="${medico.id}"></td>
             </tr>
             </tbody>
         </table>
     </div>
 </div>
+
+<!-- 🚀 Script para formatar a data e enviar JSON corretamente -->
+<script>
+    document.getElementById("formConsulta").addEventListener("submit", function(event) {
+        event.preventDefault(); // Impede o envio padrão
+
+        // Captura os valores do formulário
+        let dataHoraInput = document.querySelector('input[name="datahora"]').value;
+        let medicoId = document.querySelector('input[name="medicoId"]').value;
+        let pacienteId = document.querySelector('input[name="pacienteId"]').value;
+        let email = document.querySelector('input[name="email"]').value;
+
+        // Converte a data para o formato esperado pelo backend
+        let dataHora = new Date(dataHoraInput);
+        if (isNaN(dataHora.getTime())) {
+            alert("Data inválida!");
+            return;
+        }
+        let ano = dataHora.getFullYear();
+        let mes = String(dataHora.getMonth() + 1).padStart(2, '0');
+        let dia = String(dataHora.getDate()).padStart(2, '0');
+        let horas = String(dataHora.getHours()).padStart(2, '0');
+        let minutos = String(dataHora.getMinutes()).padStart(2, '0');
+        let segundos = "00"; // Backend precisa de segundos
+        let dataFormatada = `${ano}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
+
+        // Monta o objeto JSON para envio
+        let consultaData = {
+            datahora: dataFormatada,
+            medicoId: medicoId,
+            pacienteId: pacienteId,
+            email: email
+        };
+
+        // Envia a requisição AJAX como JSON
+        fetch("/marcar/consulta", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(consultaData)
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "/gerenciamento"; // Redireciona se sucesso
+            } else {
+                alert("Erro ao agendar consulta!");
+            }
+        })
+        .catch(error => console.error("Erro:", error));
+    });
+</script>
+
 </body>
 </html>

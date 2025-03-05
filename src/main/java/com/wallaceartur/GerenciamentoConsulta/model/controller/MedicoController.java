@@ -32,7 +32,13 @@ public class MedicoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(medicoDTO);
     }
 
-    @PutMapping
+    @GetMapping("/{id}")
+    public ResponseEntity<MedicoDTO> findById(@PathVariable Long id) {
+        MedicoDTO medicoDTO = medicoService.findById(id);
+        return ResponseEntity.ok(medicoDTO);
+    }
+
+    @PutMapping("/{id}")
     public ResponseEntity<MedicoDTO> atualizar(@RequestBody @Valid AtualizarMedicoDTO dto) {
         MedicoDTO medicoDTO = medicoService.atualizar(dto);
         return ResponseEntity.ok(medicoDTO);

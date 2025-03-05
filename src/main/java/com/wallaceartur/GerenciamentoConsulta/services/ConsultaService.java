@@ -7,7 +7,6 @@ import com.wallaceartur.GerenciamentoConsulta.model.Paciente;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.AtualizarConsultaDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.ConsultaDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.dtos.NovaConsultaDTO;
-import com.wallaceartur.GerenciamentoConsulta.model.dtos.NovaConsultaNotificacaoDTO;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.ConsultaRepository;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.MedicoRepository;
 import com.wallaceartur.GerenciamentoConsulta.model.repositories.PacienteRepository;
@@ -38,23 +37,40 @@ public class ConsultaService {
 
     public ConsultaDTO agendarConsulta(NovaConsultaDTO dto) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-        LocalDateTime dataHora = LocalDateTime.parse(dto.datahora(), formatter);
+        try {
+
+            System.out.println("Id do medico recebido:" + dto.medicoId());
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+            LocalDateTime dataHora = LocalDateTime.parse(dto.datahora(), formatter);
 
 
-        Medico medico = medicoRepository.findById(dto.medicoId())
-                .orElseThrow(() -> new RuntimeException("Medico não encontrado"));
+            Medico medico = medicoRepository.findById(dto.medicoId())
+                    .orElseThrow(() -> {
+                        System.out.println("Médico não encontrado para o ID: " + dto.medicoId());
+                        return new EntityNotFoundException("Medico não encontrado");
+                    });
 
-        Paciente paciente  = pacienteRepository.findById(dto.pacienteId())
-                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
 
-        Consulta consulta = new Consulta(null, dataHora, StatusConsulta.AGENDADA, paciente, medico);
+            System.out.println("Buscando médico com ID: " + dto.medicoId());
 
-        rabbitTemplate.convertAndSend("fila_notificacao_consulta" , paciente.getEmail() );
 
-        consulta = consultaRepository.save(consulta);
+            Paciente paciente  = pacienteRepository.findById(dto.pacienteId())
+                    .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
 
-        return new ConsultaDTO(consulta);
+            Consulta consulta = new Consulta(null, dataHora, StatusConsulta.AGENDADA, paciente, medico);
+
+            rabbitTemplate.convertAndSend("fila_notificacao_consulta" , paciente.getEmail() );
+
+            consulta = consultaRepository.save(consulta);
+
+            return new ConsultaDTO(consulta);
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+
     }
 
     public ConsultaDTO atualizar(AtualizarConsultaDTO dto) {
